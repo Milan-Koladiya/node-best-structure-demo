@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const connectionURL = process.env.CONNECTION_URL
 
 const connection = mongoose
   .connect(
-    "mongodb+srv://test:test123@cluster0.vdwtb.mongodb.net/Social-Media?retryWrites=true&w=majority",
+    connectionURL,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

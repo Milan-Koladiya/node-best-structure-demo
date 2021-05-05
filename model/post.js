@@ -2,18 +2,29 @@ const mongoose = require('mongoose')
 const connection = require('../connection/connection')
 
 const postSchema = new mongoose.Schema({
-    Title : {
+    place_name : {
         type:String,
         trim: true,
     },
-    Body : {
+    country : {
         type: String,
         required:true,
         trim: true,
     },
-    Postedby : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref : 'user'
+    city : {
+        type: String,
+        required:true,
+        trim: true,
+    },
+    radius : {
+        type: Number,
+        required:true,
+        trim: true,
+    },
+    weather : {
+        type: String,
+        required: true,
+        trim: true
     }
 },
     {

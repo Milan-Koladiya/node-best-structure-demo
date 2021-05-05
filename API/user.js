@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
+const path = require("path");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../sendmail/sendmail");
 const auth = require("../auth/auth");
@@ -11,23 +12,26 @@ const postModel = require("../model/post");
 
 const Storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "Uploads/");
+    cb(null, "Uploads/profile");
   },
-  // filename: (req, file, cb) => {
-  //     cb(null, file.originalname)
-  // }
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
 const upload = multer({
   storage: Storage,
+  limits: { fileSize: 1000000 },
 });
 
 // ************* User SignUp ***************
-router.post("/signup", upload.single("file"), async (req, res) => {
+router.post("/signup", upload.single("Image"), async (req, res) => {
   console.log("signup router");
   try {
     let user = req.body;
-    if (!user.Username || !user.Emailid || !user.Password || !user.avtar) {
+    const imagename = req.file.filename;
+    user.avtar = imagename;
+    if (!user.Username || !user.Emailid || !user.Password) {
       return res.status(400).json({ error: "Please fill all the field" });
     }
     console.log(user);
@@ -159,6 +163,24 @@ router.delete("/userdelete", auth, async (req, res) => {
     .catch(() => {
       res.status(400).json({ error: "error" });
     });
+});
+
+// ************* All User ***************
+
+router.get("/alluser", auth, async (req, res) => {
+  try {
+    const allUser = await User.find({});
+    const Username = allUser.map((user) => {
+      return { Username: user.Username, _id: user._id };
+    });
+    if (!allUser) {
+      return res.status(400).json({ message: "User not availble" });
+    }
+    console.log(allUser);
+    res.status(200).json({ user: Username });
+  } catch (error) {
+    res.status(400).json({ error: "There is some error" });
+  }
 });
 
 module.exports = router;
