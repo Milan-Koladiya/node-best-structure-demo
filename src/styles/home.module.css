@@ -34,6 +34,26 @@ span {
   margin-bottom: 30px;
 }
 
+.filterDiv {
+  display: flex !important;
+  justify-content: space-evenly;
+}
+
+.searchForm {
+  margin-right: 96px;
+  margin-bottom: 15px;
+}
+
+.DeleteIcon {
+  width: 34px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.form-inline {
+  margin-right: 10px !important;
+}
+
 @media screen and (max-width: 426px) {
   .scard {
     border: 1px solid gray;

@@ -79,7 +79,7 @@ function Header(props) {
                   <Link to="/addpost" className="mr-5 hover:text-gray-900">
                     Add Post
                   </Link>
-                  <Link to="/mypost" className="mr-5 hover:text-gray-900">
+                  {/* <Link to="/mypost" className="mr-5 hover:text-gray-900">
                     My Post
                   </Link>
                   <Link to="/myprofile" className="mr-5 hover:text-gray-900">
@@ -91,7 +91,7 @@ function Header(props) {
                   >
                     {" "}
                     Logout
-                  </button>
+                  </button> */}
                 </>
               ) : (
                 <>

@@ -2,12 +2,15 @@ import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useHistory, useLocation } from "react-router-dom";
+
 import "../styles/addpost.css";
 import Header from "../maincomponent/header";
-import { useHistory, useLocation } from "react-router-dom";
 import API from "../apiconfi";
 
+
 function Addpost(props) {
+  const [formData, setFormData] = useState({});
   const [Title, setTitle] = useState();
   const [Body, setBody] = useState();
   const [UpdatedTitle, setUpdatedTitle] = useState("");
@@ -17,24 +20,28 @@ function Addpost(props) {
   const history = useHistory();
   const location = useLocation();
 
+  const handleChange = (e) => {
+    console.log("E -- ", e.target);
+    setFormData({...formData, [e.target.name] : e.target.value})
+  }
+
+  console.log("formData -- ", formData);
+
   //**** Addpost */
   const sendPost = () => {
-    if (!Title || !Body) {
+    if (Object.keys(formData).length < 5) {
       return toast.warn("please add both field");
     }
 
     axios
       .post(
-        `${API}/createpost`,
-        {
-          Title,
-          Body,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("jwt"),
-          },
-        }
+        `${API}/addPost`,
+        formData,
+        // {
+        //   headers: {
+        //     Authorization: "Bearer " + localStorage.getItem("jwt"),
+        //   },
+        // }
       )
       .then(() => {
         toast.success("Post saved Successfully...");
@@ -94,7 +101,7 @@ function Addpost(props) {
               Update Post
             </h1>
             <br />
-            <h3>Title</h3>
+            <h3>Place Name</h3>
             <input
               type="text"
               value={UpdatedTitle}
@@ -102,7 +109,31 @@ function Addpost(props) {
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Title"
             />
-            <h3>Body</h3>
+            <h3>Country</h3>
+            <input
+              type="text"
+              value={UpdatedBody}
+              onChange={(e) => setUpdatedBody(e.target.value)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter Body"
+            />
+            <h3>City</h3>
+            <input
+              type="text"
+              value={UpdatedBody}
+              onChange={(e) => setUpdatedBody(e.target.value)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter Body"
+            />
+            <h3>Weather</h3>
+            <input
+              type="text"
+              value={UpdatedBody}
+              onChange={(e) => setUpdatedBody(e.target.value)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter Body"
+            />
+            <h3>Radius</h3>
             <input
               type="text"
               value={UpdatedBody}
@@ -128,21 +159,50 @@ function Addpost(props) {
               Add Post
             </h1>
             <br />
-            <h3>Title</h3>
+            <h3>Place Name</h3>
             <input
               type="text"
-              value={Title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={formData.place_name}
+              name="place_name"
+              onChange={(e) => handleChange(e)}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
-              placeholder="Enter Title"
+              placeholder="Enter Place Name"
             />
-            <h3>Body</h3>
+            <h3>Country</h3>
             <input
               type="text"
-              value={Body}
-              onChange={(e) => setBody(e.target.value)}
+              value={formData.country}
+              name="country"
+              onChange={(e) => handleChange(e)}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
-              placeholder="Enter Body"
+              placeholder="Enter Country"
+            />
+            <h3>City</h3>
+            <input
+              type="text"
+              value={formData.city}
+              name="city"
+              onChange={(e) => handleChange(e)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter City"
+            />
+            <h3>Weather</h3>
+            <input
+              type="text"
+              value={formData.weather}
+              name="weather"
+              onChange={(e) => handleChange(e)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter Weather"
+            />
+            <h3>Radius</h3>
+            <input
+              type="number"
+              value={formData.radius}
+              name="radius"
+              onChange={(e) => handleChange(e)}
+              className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
+              placeholder="Enter Radius"
             />
             <button
               onClick={sendPost}
