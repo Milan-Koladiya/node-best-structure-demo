@@ -4,7 +4,7 @@ const multer = require("multer");
 const auth = require("../auth/auth");
 
 const postModel = require("../model/post");
-const { addPost, allPost, deletePost, seatchPost } = require("../controllers/postControllers");
+const { addPost, allPost, deletePost, searchPost } = require("../controllers/postControllers");
 
 const Storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -65,6 +65,6 @@ router.post("/addPost", addPost);
 router.get("/allpost", allPost);
 
 // ************* All Post With Pagignation ***************
-router.get("/seatchPost", seatchPost);
+router.get("/searchPost", searchPost);
 
 module.exports = router;
