@@ -11,8 +11,7 @@ import API from "../apiconfi";
 
 function Addpost(props) {
   const [formData, setFormData] = useState({});
-  const [Title, setTitle] = useState();
-  const [Body, setBody] = useState();
+  const [editData, setEditData] = useState({});
   const [UpdatedTitle, setUpdatedTitle] = useState("");
   const [UpdatedBody, setUpdatedBody] = useState("");
   const [UpdatedId, setUpdatedId] = useState();
@@ -20,12 +19,13 @@ function Addpost(props) {
   const history = useHistory();
   const location = useLocation();
 
-  const handleChange = (e) => {
-    console.log("E -- ", e.target);
-    setFormData({...formData, [e.target.name] : e.target.value})
+  const handleChange = (e, category) => {
+    if (category == "addPost") {
+      setFormData({...formData, [e.target.name] : e.target.value})
+    } else if(category == "editPost") {
+      setEditData({...editData, [e.target.name] : e.target.value})
+    }
   }
-
-  console.log("formData -- ", formData);
 
   //**** Addpost */
   const sendPost = () => {
@@ -37,11 +37,6 @@ function Addpost(props) {
       .post(
         `${API}/addPost`,
         formData,
-        // {
-        //   headers: {
-        //     Authorization: "Bearer " + localStorage.getItem("jwt"),
-        //   },
-        // }
       )
       .then(() => {
         toast.success("Post saved Successfully...");
@@ -52,15 +47,19 @@ function Addpost(props) {
       });
   };
 
+  console.log("editData -- ", editData);
+  console.log("addData -- ", formData);
+
   //**** Update Post */
 
   useEffect(() => {
     if (location.state) {
       const post = location.state;
-      console.log(post);
-      setUpdatedTitle(post.Title);
-      setUpdatedBody(post.Body);
-      setUpdatedId(post.Id);
+      setUpdatedId(post._id);
+      delete post._id;
+      delete post.createdAt;
+      delete post.updatedAt;
+      setEditData(post);
     }
   }, [location.state]);
 
@@ -68,15 +67,7 @@ function Addpost(props) {
     axios
       .patch(
         `${API}/updatepost/${UpdatedId}`,
-        {
-          Title: UpdatedTitle,
-          Body: UpdatedBody,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("jwt"),
-          },
-        }
+        editData
       )
       .then(() => {
         toast.success("Post Updated succssfully");
@@ -104,40 +95,45 @@ function Addpost(props) {
             <h3>Place Name</h3>
             <input
               type="text"
-              value={UpdatedTitle}
-              onChange={(e) => setUpdatedTitle(e.target.value)}
+              value={editData?.place_name}
+              name="place_name"
+              onChange={(e) => handleChange(e, "editPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Title"
             />
             <h3>Country</h3>
             <input
               type="text"
-              value={UpdatedBody}
-              onChange={(e) => setUpdatedBody(e.target.value)}
+              value={editData?.country}
+              name="country"
+              onChange={(e) => handleChange(e, "editPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Body"
             />
             <h3>City</h3>
             <input
               type="text"
-              value={UpdatedBody}
-              onChange={(e) => setUpdatedBody(e.target.value)}
+              value={editData?.city}
+              name="city"
+              onChange={(e) => handleChange(e, "editPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Body"
             />
             <h3>Weather</h3>
             <input
               type="text"
-              value={UpdatedBody}
-              onChange={(e) => setUpdatedBody(e.target.value)}
+              value={editData?.weather}
+              name="weather"
+              onChange={(e) => handleChange(e, "editPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Body"
             />
             <h3>Radius</h3>
             <input
               type="text"
-              value={UpdatedBody}
-              onChange={(e) => setUpdatedBody(e.target.value)}
+              value={editData?.radius}
+              name="radius"
+              onChange={(e) => handleChange(e, "editPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Body"
             />
@@ -164,7 +160,7 @@ function Addpost(props) {
               type="text"
               value={formData.place_name}
               name="place_name"
-              onChange={(e) => handleChange(e)}
+              onChange={(e) => handleChange(e, "addPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Place Name"
             />
@@ -173,7 +169,7 @@ function Addpost(props) {
               type="text"
               value={formData.country}
               name="country"
-              onChange={(e) => handleChange(e)}
+              onChange={(e) => handleChange(e, "addPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Country"
             />
@@ -182,7 +178,7 @@ function Addpost(props) {
               type="text"
               value={formData.city}
               name="city"
-              onChange={(e) => handleChange(e)}
+              onChange={(e) => handleChange(e, "addPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter City"
             />
@@ -191,7 +187,7 @@ function Addpost(props) {
               type="text"
               value={formData.weather}
               name="weather"
-              onChange={(e) => handleChange(e)}
+              onChange={(e) => handleChange(e, "addPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Weather"
             />
@@ -200,7 +196,7 @@ function Addpost(props) {
               type="number"
               value={formData.radius}
               name="radius"
-              onChange={(e) => handleChange(e)}
+              onChange={(e) => handleChange(e, "addPost")}
               className="bg-white rounded border border-gray-400 focus:outline-none focus:border-indigo-500 text-base px-4 py-2 mb-4"
               placeholder="Enter Radius"
             />

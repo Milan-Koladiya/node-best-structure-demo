@@ -9,6 +9,7 @@ import style from "../styles/home.module.css";
 import Header from "../maincomponent/header";
 import styles from "../styles/home.module.css";
 import DeleteIcon from "../Static/DeleteIcon.png";
+import EditIcon from "../Static/EditIcon.png";
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -37,31 +38,26 @@ function Home() {
       });
   };
 
-  // Update Post
-  const UpdatePost = (Title, Body, Id) => {
-    history.push({ pathname: "/addpost", state: { Title, Body, Id } });
-  };
-
   const handlechangespage = (pageNumber) => {
     getRecords(pageNumber);
-    getRecords(1);
-    // console.log(pageNumber);
   };
 
   const handleSearch = (e, sorting) => {
     e.preventDefault();
     let URL;
-    if(sorting !== undefined) {
-      URL = `${API}/searchPost?search=${searchString}&page=${activePage}&sort=${sorting}`
+    if (sorting !== undefined) {
+      URL = `${API}/searchPost?search=${searchString}&page=${activePage}&sort=${sorting}`;
     } else {
-      URL = `${API}/searchPost?search=${searchString}&page=${activePage}`
+      URL = `${API}/searchPost?search=${searchString}&page=${activePage}`;
     }
     axios
       .get(URL)
       .then((data) => {
         setactivePage(activePage);
         setPosts(data.data.data);
-        settotal(data.data.doc);
+        if (sorting === undefined) {
+          settotal(data.data.doc);
+        }
         setgetPost(false);
       })
       .catch((err) => {
@@ -81,6 +77,10 @@ function Home() {
       });
   };
 
+  const handleEdit = (row) => {
+    history.push({ pathname: "/addpost", state: row });
+  }
+
   if (getPost) {
     return (
       <>
@@ -88,6 +88,7 @@ function Home() {
       </>
     );
   }
+
   return (
     <>
       <Header />
@@ -97,7 +98,7 @@ function Home() {
             <ul>
               <Pagination
                 activePage={activePage}
-                itemsCountPerPage={9}
+                itemsCountPerPage={5}
                 totalItemsCount={total}
                 onChange={handlechangespage}
                 itemClass="page-item"
@@ -108,7 +109,11 @@ function Home() {
             </ul>
             <div>
               <div class="form-group">
-                <select class="form-control" onChange={(e) => handleSearch(e, e.target.value)} id="exampleFormControlSelect1">
+                <select
+                  class="form-control"
+                  onChange={(e) => handleSearch(e, e.target.value)}
+                  id="exampleFormControlSelect1"
+                >
                   <option>Select Sort</option>
                   <option value="country">Country</option>
                   <option value="city">City</option>
@@ -175,7 +180,13 @@ function Home() {
                         className={styles.DeleteIcon}
                       ></img>
                     </td>
-                    {/* <td>{DeleteIcon}</td> */}
+                    <td>
+                      <img
+                        src={EditIcon}
+                        onClick={() => handleEdit(post)}
+                        className={styles.DeleteIcon}
+                      ></img>
+                    </td>
                   </tr>
                 );
               })}
