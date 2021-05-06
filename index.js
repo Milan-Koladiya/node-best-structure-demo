@@ -6,7 +6,6 @@ const chalk = require("chalk");
 require('dotenv').config()
 
 const user = require("./API/user");
-const requested = require("./API/requesthandle");
 const post = require("./API/post");
 
 app.use(express.json());

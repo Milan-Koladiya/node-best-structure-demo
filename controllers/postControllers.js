@@ -10,7 +10,7 @@ exports.addPost = async (req, res) => {
       !post.radius ||
       !post.weather
     ) {
-      return res.status(400).json({ error: "Please fill all the field" });
+      throw new Error("Please fill all the field");
     }
     // post.Postedby = req.user;
     new postModel(post).save((error, result) => {
@@ -26,12 +26,12 @@ exports.addPost = async (req, res) => {
 
 exports.allPost = async (req, res) => {
   let qpage = req.query.page;
-  const pages = qpage * 9 - 9;
+  const pages = qpage * 5 - 5;
   try {
     await postModel
       .find()
       .skip(pages)
-      .limit(9)
+      .limit(5)
       .sort("createdAt")
       .then((data) => {
         postModel
@@ -65,7 +65,7 @@ exports.searchPost = async (req, res) => {
     const searchString = req.query.search;
     const sortField = req.query.sort;
     let qpage = req.query.page;
-    const pages = qpage * 9 - 9;
+    const pages = qpage * 5 - 5;
 
     let searchRegEX;
     let sort;
@@ -91,14 +91,49 @@ exports.searchPost = async (req, res) => {
         }
     //   var sortLog = { sort: { sortField } };
     }
-    console.log("Sorting -- ", sort);
     const searchPost = await postModel
       .find(searchLog)
       .skip(parseInt(pages))
-      .limit(9)
+      .limit(5)
       .sort(sort);
       return res.status(200).json({ doc: searchPost.length, data: searchPost })
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.myPost = async (req, res) => {
+  try {
+    const user = req.user;
+    const post = await postModel.find({ Postedby: user._id });
+    if (!post) {
+      return res.status(400).send("no post available");
+    }
+    res.send(post);
+  } catch (error) {
+    return res.status(400).send("no post available");
+  }
+}
+
+exports.updatePost = async (req, res) => {
+  try {
+    // const user = req.user;
+    const id = req.params.id;
+    const post = req.body;
+    console.log("UpdatedId -- ", id, post);
+    postModel
+      .findOneAndUpdate({ _id: id }, post)
+      .then((data) => {
+        console.log("UpdatedId -- ", data);
+        if (!data) {
+          return res.status(400).josn({ error: "data not found" });
+        }
+        res.status(200).json({ success : "update successfulyy" });
+      })
+      .catch((err) => {
+        res.status(200).send("error to update data");
+      });
+  } catch (error) {
+    res.status(400).json({ error: "there is some error ocuured" });
+  }
+}
